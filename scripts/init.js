@@ -45,14 +45,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         type: 'system',
       },
     ],
-    groups: {
-      [GROUP_ID.stats]: { id: GROUP_ID.stats, name: localize('PTR2e.Groups.Stats'), type: 'system' },
-      [GROUP_ID.allSkills]: { id: GROUP_ID.allSkills, name: localize('PTR2e.Groups.AllSkills'), type: 'system' },
-      [GROUP_ID.favoriteSkills]: { id: GROUP_ID.favoriteSkills, name: localize('PTR2e.Groups.FavoriteSkills'), type: 'system' },
-      [GROUP_ID.skills70]: { id: GROUP_ID.skills70, name: localize('PTR2e.Groups.Skills70'), type: 'system' },
-      [GROUP_ID.skills25]: { id: GROUP_ID.skills25, name: localize('PTR2e.Groups.Skills25'), type: 'system' },
-      [GROUP_ID.skillsOther]: { id: GROUP_ID.skillsOther, name: localize('PTR2e.Groups.SkillsOther'), type: 'system' },
-    },
+    groups: [
+      { id: GROUP_ID.stats, name: localize('PTR2e.Groups.Stats'), type: 'system' },
+      { id: GROUP_ID.allSkills, name: localize('PTR2e.Groups.AllSkills'), type: 'system' },
+      { id: GROUP_ID.favoriteSkills, name: localize('PTR2e.Groups.FavoriteSkills'), type: 'system' },
+      { id: GROUP_ID.skills70, name: localize('PTR2e.Groups.Skills70'), type: 'system' },
+      { id: GROUP_ID.skills25, name: localize('PTR2e.Groups.Skills25'), type: 'system' },
+      { id: GROUP_ID.skillsOther, name: localize('PTR2e.Groups.SkillsOther'), type: 'system' },
+    ],
   };
 
   // ── ActionHandler ─────────────────────────────────────────────────────────
