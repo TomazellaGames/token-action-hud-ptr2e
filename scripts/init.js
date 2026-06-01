@@ -28,13 +28,15 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     // TAH Core calls buildSystemActions(groupIds) – actor is on this.actor
     async buildSystemActions (groupIds) {
       const actor = this.actor;
-      if (!actor) return;
+      console.log('PTR2e TAH | buildSystemActions called', { actor: actor?.name, actorType: actor?.type, groupIds });
+      if (!actor) { console.warn('PTR2e TAH | no actor on this.actor, aborting'); return; }
 
       await this.#buildStats(actor);
       await this.#buildSkills(actor);
     }
 
     async #buildStats (actor) {
+      console.log('PTR2e TAH | #buildStats | health:', actor.system.health, 'shield:', actor.system.shield, 'pp:', actor.system.powerPoints, 'movement:', actor.system.movement, 'traits:', actor.system.traits);
       const actions = [];
 
       // HP
@@ -88,10 +90,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         });
       }
 
+      console.log('PTR2e TAH | #buildStats | adding', actions.length, 'actions to group', GROUP_ID.stats, actions);
       await this.addActions(actions, { id: GROUP_ID.stats, type: 'system' });
     }
 
     async #buildSkillGroup (actor, groupId, skills) {
+      console.log('PTR2e TAH | #buildSkillGroup', groupId, 'skills count:', skills.length);
       if (!skills.length) return;
 
       const actions = skills.map((skill) => {
