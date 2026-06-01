@@ -74,13 +74,16 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
       });
 
       // Traits (display only, tooltip on hover)
+      // PTR2E may give strings, objects with .slug, or objects with .slug + .label + .description
       const traits = actor.system.traits ?? [];
-      for (const slug of traits) {
-        const label = Utils.slugToLabel(slug);
+      for (const trait of traits) {
+        const slug    = typeof trait === 'string' ? trait : (trait?.slug ?? String(trait));
+        const label   = typeof trait === 'string' ? Utils.slugToLabel(trait) : (trait?.label ?? Utils.slugToLabel(slug));
+        const tooltip = trait?.description ?? label;
         actions.push({
           id: `${ACTION_TYPE.trait}-${slug}`,
           name: label,
-          tooltip: label,
+          tooltip: tooltip,
           system: { actionType: ACTION_TYPE.trait, actionId: slug },
         });
       }

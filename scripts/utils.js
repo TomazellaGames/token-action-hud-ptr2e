@@ -14,7 +14,8 @@ export class Utils {
    * e.g. "bipedal-speech" → "Bipedal Speech"
    */
   static slugToLabel(slug) {
-    return slug
+    const str = typeof slug === 'string' ? slug : String(slug?.slug ?? slug ?? '');
+    return str
       .replace(/[-_]/g, ' ')
       .replace(/\b\w/g, (c) => c.toUpperCase());
   }
