@@ -1,0 +1,44 @@
+{
+  "id": "token-action-hud-ptr2e",
+  "version": "1.0.0",
+  "title": "Token Action HUD - Pokémon Tabletop Reunited: Evolved",
+  "description": "Token Action HUD system module for the PTR2E Foundry VTT system",
+  "authors": [
+    {
+      "name": "Jeferson Tomazella"
+    }
+  ],
+  "url": "https://github.com/TomazellaGames/token-action-hud-ptr2e",
+  "license": "LICENSE",
+  "readme": "README.md",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
+  },
+  "dependencies": [
+    {
+      "id": "ptr2e",
+      "type": "system"
+    },
+    {
+      "id": "token-action-hud-core",
+      "type": "module",
+      "compatibility": {
+        "minimum": "2.1.0"
+      }
+    }
+  ],
+  "esmodules": [
+    "scripts/init.js"
+  ],
+  "styles": [
+    "styles/tah-ptr2e.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json"
+    }
+  ]
+}

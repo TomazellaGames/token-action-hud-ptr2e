@@ -1,0 +1,23 @@
+{
+  "PTR2e": {
+    "Groups": {
+      "Stats": "Stats",
+      "AllSkills": "All Skills",
+      "FavoriteSkills": "Favorite Skills",
+      "Skills70": "70+ Skills",
+      "Skills25": "25+ Skills",
+      "SkillsOther": "Other Skills"
+    },
+    "Stats": {
+      "HP": "Hit Points",
+      "Shield": "Shield",
+      "PP": "Power Points",
+      "Overland": "Overland"
+    },
+    "ActionType": {
+      "stat": "Stat",
+      "skill": "Skill",
+      "trait": "Trait"
+    }
+  }
+}

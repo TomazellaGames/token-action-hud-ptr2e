@@ -1,0 +1,13 @@
+{
+  "name": "token-action-hud-ptr2e",
+  "version": "1.0.0",
+  "description": "Token Action HUD system module for the PTR2E Foundry VTT system",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.0.0"
+  }
+}
