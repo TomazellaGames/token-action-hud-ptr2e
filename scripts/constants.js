@@ -13,6 +13,7 @@ export const ACTION_TYPE = {
 
 export const GROUP_ID = {
   stats: 'stats',
+  tags: 'tags',
   allSkills: 'all-skills',
   favoriteSkills: 'favorite-skills',
   skills70: 'skills-70plus',
