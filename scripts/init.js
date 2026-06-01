@@ -6,21 +6,31 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
   const localize = coreModule.api.Utils.i18n;
 
   // ── Default HUD layout ────────────────────────────────────────────────────
-  // layout  → array consumed by LayoutHandler; becomes the Record fallback
-  //           inside getUserGroups when no user customisation is saved yet.
-  // groups  → array iterated with for...of by GroupHandler's #setDefaultGroups.
-  const GROUP_DEFS = [
-    { nestId: GROUP_ID.stats,          id: GROUP_ID.stats,          name: localize('PTR2e.Groups.Stats'),          type: 'system' },
-    { nestId: GROUP_ID.allSkills,      id: GROUP_ID.allSkills,      name: localize('PTR2e.Groups.AllSkills'),      type: 'system' },
-    { nestId: GROUP_ID.favoriteSkills, id: GROUP_ID.favoriteSkills, name: localize('PTR2e.Groups.FavoriteSkills'), type: 'system' },
-    { nestId: GROUP_ID.skills70,       id: GROUP_ID.skills70,       name: localize('PTR2e.Groups.Skills70'),       type: 'system' },
-    { nestId: GROUP_ID.skills25,       id: GROUP_ID.skills25,       name: localize('PTR2e.Groups.Skills25'),       type: 'system' },
-    { nestId: GROUP_ID.skillsOther,    id: GROUP_ID.skillsOther,    name: localize('PTR2e.Groups.SkillsOther'),   type: 'system' },
+  // Each tab (layout item) must contain an inner sub-group with the same id
+  // but a composed nestId (e.g. "stats_stats"). TAH Core only renders actions
+  // that belong to a sub-group inside the tab — not actions on the tab itself.
+  // addActions({ id: 'stats' }) matches BOTH the tab (nestId:'stats') AND the
+  // inner sub-group (nestId:'stats_stats'), so actions appear inside the tab.
+  const g = (id, name) => ({ id, name, type: 'system' });
+
+  const RAW_GROUPS = [
+    g(GROUP_ID.stats,          localize('PTR2e.Groups.Stats')),
+    g(GROUP_ID.allSkills,      localize('PTR2e.Groups.AllSkills')),
+    g(GROUP_ID.favoriteSkills, localize('PTR2e.Groups.FavoriteSkills')),
+    g(GROUP_ID.skills70,       localize('PTR2e.Groups.Skills70')),
+    g(GROUP_ID.skills25,       localize('PTR2e.Groups.Skills25')),
+    g(GROUP_ID.skillsOther,    localize('PTR2e.Groups.SkillsOther')),
   ];
 
   const DEFAULTS = {
-    layout: GROUP_DEFS,
-    groups: GROUP_DEFS,
+    // layout: each top-level tab entry wraps a sub-group of the same id
+    layout: RAW_GROUPS.map(grp => ({
+      ...grp,
+      nestId: grp.id,
+      groups: [{ ...grp, nestId: `${grp.id}_${grp.id}` }],
+    })),
+    // groups: flat canonical list – iterated with for...of by GroupHandler
+    groups: RAW_GROUPS,
   };
 
   // ── ActionHandler ─────────────────────────────────────────────────────────
