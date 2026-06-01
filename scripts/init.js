@@ -6,15 +6,21 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
   const localize = coreModule.api.Utils.i18n;
 
   // ── Default HUD layout ────────────────────────────────────────────────────
+  // layout  → array consumed by LayoutHandler; becomes the Record fallback
+  //           inside getUserGroups when no user customisation is saved yet.
+  // groups  → array iterated with for...of by GroupHandler's #setDefaultGroups.
+  const GROUP_DEFS = [
+    { nestId: GROUP_ID.stats,          id: GROUP_ID.stats,          name: localize('PTR2e.Groups.Stats'),          type: 'system' },
+    { nestId: GROUP_ID.allSkills,      id: GROUP_ID.allSkills,      name: localize('PTR2e.Groups.AllSkills'),      type: 'system' },
+    { nestId: GROUP_ID.favoriteSkills, id: GROUP_ID.favoriteSkills, name: localize('PTR2e.Groups.FavoriteSkills'), type: 'system' },
+    { nestId: GROUP_ID.skills70,       id: GROUP_ID.skills70,       name: localize('PTR2e.Groups.Skills70'),       type: 'system' },
+    { nestId: GROUP_ID.skills25,       id: GROUP_ID.skills25,       name: localize('PTR2e.Groups.Skills25'),       type: 'system' },
+    { nestId: GROUP_ID.skillsOther,    id: GROUP_ID.skillsOther,    name: localize('PTR2e.Groups.SkillsOther'),   type: 'system' },
+  ];
+
   const DEFAULTS = {
-    groups: [
-      { id: GROUP_ID.stats,         name: localize('PTR2e.Groups.Stats'),         type: 'system' },
-      { id: GROUP_ID.allSkills,     name: localize('PTR2e.Groups.AllSkills'),     type: 'system' },
-      { id: GROUP_ID.favoriteSkills,name: localize('PTR2e.Groups.FavoriteSkills'),type: 'system' },
-      { id: GROUP_ID.skills70,      name: localize('PTR2e.Groups.Skills70'),      type: 'system' },
-      { id: GROUP_ID.skills25,      name: localize('PTR2e.Groups.Skills25'),      type: 'system' },
-      { id: GROUP_ID.skillsOther,   name: localize('PTR2e.Groups.SkillsOther'),  type: 'system' },
-    ],
+    layout: GROUP_DEFS,
+    groups: GROUP_DEFS,
   };
 
   // ── ActionHandler ─────────────────────────────────────────────────────────
