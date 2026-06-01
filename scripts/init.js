@@ -7,152 +7,106 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
   // ── Default HUD layout ────────────────────────────────────────────────────
   const DEFAULTS = {
-    layout: [
-      {
-        nestId: GROUP_ID.stats,
-        id: GROUP_ID.stats,
-        name: localize('PTR2e.Groups.Stats'),
-        type: 'system',
-      },
-      {
-        nestId: GROUP_ID.allSkills,
-        id: GROUP_ID.allSkills,
-        name: localize('PTR2e.Groups.AllSkills'),
-        type: 'system',
-      },
-      {
-        nestId: GROUP_ID.favoriteSkills,
-        id: GROUP_ID.favoriteSkills,
-        name: localize('PTR2e.Groups.FavoriteSkills'),
-        type: 'system',
-      },
-      {
-        nestId: GROUP_ID.skills70,
-        id: GROUP_ID.skills70,
-        name: localize('PTR2e.Groups.Skills70'),
-        type: 'system',
-      },
-      {
-        nestId: GROUP_ID.skills25,
-        id: GROUP_ID.skills25,
-        name: localize('PTR2e.Groups.Skills25'),
-        type: 'system',
-      },
-      {
-        nestId: GROUP_ID.skillsOther,
-        id: GROUP_ID.skillsOther,
-        name: localize('PTR2e.Groups.SkillsOther'),
-        type: 'system',
-      },
-    ],
     groups: [
-      { id: GROUP_ID.stats, name: localize('PTR2e.Groups.Stats'), type: 'system' },
-      { id: GROUP_ID.allSkills, name: localize('PTR2e.Groups.AllSkills'), type: 'system' },
-      { id: GROUP_ID.favoriteSkills, name: localize('PTR2e.Groups.FavoriteSkills'), type: 'system' },
-      { id: GROUP_ID.skills70, name: localize('PTR2e.Groups.Skills70'), type: 'system' },
-      { id: GROUP_ID.skills25, name: localize('PTR2e.Groups.Skills25'), type: 'system' },
-      { id: GROUP_ID.skillsOther, name: localize('PTR2e.Groups.SkillsOther'), type: 'system' },
+      { id: GROUP_ID.stats,         name: localize('PTR2e.Groups.Stats'),         type: 'system' },
+      { id: GROUP_ID.allSkills,     name: localize('PTR2e.Groups.AllSkills'),     type: 'system' },
+      { id: GROUP_ID.favoriteSkills,name: localize('PTR2e.Groups.FavoriteSkills'),type: 'system' },
+      { id: GROUP_ID.skills70,      name: localize('PTR2e.Groups.Skills70'),      type: 'system' },
+      { id: GROUP_ID.skills25,      name: localize('PTR2e.Groups.Skills25'),      type: 'system' },
+      { id: GROUP_ID.skillsOther,   name: localize('PTR2e.Groups.SkillsOther'),  type: 'system' },
     ],
   };
 
   // ── ActionHandler ─────────────────────────────────────────────────────────
   class ActionHandler extends coreModule.api.ActionHandler {
-    async buildSystemActions(character) {
-      const { actor } = character;
+    // TAH Core calls buildSystemActions(groupIds) – actor is on this.actor
+    async buildSystemActions (groupIds) {
+      const actor = this.actor;
       if (!actor) return;
 
       await this.#buildStats(actor);
       await this.#buildSkills(actor);
     }
 
-    async #buildStats(actor) {
+    async #buildStats (actor) {
       const actions = [];
 
       // HP
       const hp = actor.system.health ?? {};
       actions.push({
-        id: `${ACTION_TYPE.stat}|${STAT_ID.hp}`,
-        name: `HP: ${hp.value ?? 0}/${hp.max ?? 0}`,
-        encodedValue: [ACTION_TYPE.stat, STAT_ID.hp].join('|'),
-        tooltip: localize('PTR2e.Stats.HP'),
-        cssClass: 'ptr2e-stat',
+        id: `${ACTION_TYPE.stat}-${STAT_ID.hp}`,
+        name: localize('PTR2e.Stats.HP'),
+        info1: { text: `${hp.value ?? 0}/${hp.max ?? 0}` },
+        system: { actionType: ACTION_TYPE.stat, actionId: STAT_ID.hp },
       });
 
       // Shield
       const shield = actor.system.shield ?? {};
       actions.push({
-        id: `${ACTION_TYPE.stat}|${STAT_ID.shield}`,
-        name: `Shield: ${shield.value ?? 0}/${shield.max ?? 0}`,
-        encodedValue: [ACTION_TYPE.stat, STAT_ID.shield].join('|'),
-        tooltip: localize('PTR2e.Stats.Shield'),
-        cssClass: 'ptr2e-stat',
+        id: `${ACTION_TYPE.stat}-${STAT_ID.shield}`,
+        name: localize('PTR2e.Stats.Shield'),
+        info1: { text: `${shield.value ?? 0}/${shield.max ?? 0}` },
+        system: { actionType: ACTION_TYPE.stat, actionId: STAT_ID.shield },
       });
 
       // PP
       const pp = actor.system.powerPoints ?? {};
       actions.push({
-        id: `${ACTION_TYPE.stat}|${STAT_ID.pp}`,
-        name: `PP: ${pp.value ?? 0}/${pp.max ?? 0}`,
-        encodedValue: [ACTION_TYPE.stat, STAT_ID.pp].join('|'),
-        tooltip: localize('PTR2e.Stats.PP'),
-        cssClass: 'ptr2e-stat',
+        id: `${ACTION_TYPE.stat}-${STAT_ID.pp}`,
+        name: localize('PTR2e.Stats.PP'),
+        info1: { text: `${pp.value ?? 0}/${pp.max ?? 0}` },
+        system: { actionType: ACTION_TYPE.stat, actionId: STAT_ID.pp },
       });
 
-      // Overland movement
+      // Overland movement (display only)
       const overland = actor.system.movement?.overland?.value ?? 3;
       actions.push({
-        id: `${ACTION_TYPE.stat}|${STAT_ID.overland}`,
-        name: `${localize('PTR2e.Stats.Overland')}: ${overland}`,
-        encodedValue: [ACTION_TYPE.stat, STAT_ID.overland].join('|'),
-        tooltip: localize('PTR2e.Stats.Overland'),
-        cssClass: 'ptr2e-stat ptr2e-display-only',
+        id: `${ACTION_TYPE.stat}-${STAT_ID.overland}`,
+        name: localize('PTR2e.Stats.Overland'),
+        info1: { text: String(overland) },
+        system: { actionType: ACTION_TYPE.stat, actionId: STAT_ID.overland },
       });
 
-      // Traits
+      // Traits (display only, tooltip on hover)
       const traits = actor.system.traits ?? [];
       for (const slug of traits) {
         const label = Utils.slugToLabel(slug);
         actions.push({
-          id: `${ACTION_TYPE.trait}|${slug}`,
+          id: `${ACTION_TYPE.trait}-${slug}`,
           name: label,
-          encodedValue: [ACTION_TYPE.trait, slug].join('|'),
           tooltip: label,
-          cssClass: 'ptr2e-trait ptr2e-display-only',
+          system: { actionType: ACTION_TYPE.trait, actionId: slug },
         });
       }
 
       await this.addActions(actions, { id: GROUP_ID.stats, type: 'system' });
     }
 
-    async #buildSkillGroup(actor, nestId, skills) {
+    async #buildSkillGroup (actor, groupId, skills) {
       if (!skills.length) return;
 
       const actions = skills.map((skill) => {
         const statistic = actor.skills?.[skill.slug];
         const label = statistic?.label ?? Utils.slugToLabel(skill.slug);
-        const total = skill.total ?? 0;
         return {
-          id: `${ACTION_TYPE.skill}|${skill.slug}`,
-          name: `${label} (${total})`,
-          encodedValue: [ACTION_TYPE.skill, skill.slug].join('|'),
-          tooltip: `${label}: ${total}`,
-          cssClass: 'ptr2e-skill',
+          id: `${ACTION_TYPE.skill}-${skill.slug}`,
+          name: label,
+          info1: { text: String(skill.total ?? 0) },
+          tooltip: `${label}: ${skill.total ?? 0}`,
+          system: { actionType: ACTION_TYPE.skill, actionId: skill.slug },
         };
       });
 
-      await this.addActions(actions, { id: nestId, type: 'system' });
+      await this.addActions(actions, { id: groupId, type: 'system' });
     }
 
-    async #buildSkills(actor) {
-      const allSkills = Object.values(actor.system.skills ?? {}).filter(
-        (s) => !s.hidden,
-      );
+    async #buildSkills (actor) {
+      const allSkills = Object.values(actor.system.skills ?? {}).filter((s) => !s.hidden);
+      const byTotalDesc = (a, b) => (b.total ?? 0) - (a.total ?? 0);
 
-      // All Skills – alphabetical by slug
+      // All Skills – A–Z
       const allSorted = [...allSkills].sort((a, b) => a.slug.localeCompare(b.slug));
       await this.#buildSkillGroup(actor, GROUP_ID.allSkills, allSorted);
-
-      const byTotalDesc = (a, b) => (b.total ?? 0) - (a.total ?? 0);
 
       // Favorite Skills
       const favorites = allSkills.filter((s) => s.favourite).sort(byTotalDesc);
@@ -168,7 +122,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         .sort(byTotalDesc);
       await this.#buildSkillGroup(actor, GROUP_ID.skills25, mid);
 
-      // Other Skills (< 25)
+      // < 25 Skills
       const low = allSkills.filter((s) => (s.total ?? 0) < 25).sort(byTotalDesc);
       await this.#buildSkillGroup(actor, GROUP_ID.skillsOther, low);
     }
@@ -176,7 +130,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
   // ── RollHandler ───────────────────────────────────────────────────────────
   class RollHandler extends coreModule.api.RollHandler {
-    async handleActionClick(event, actionTypeId, actionId) {
+    // TAH Core calls handleActionClick(event, actionTypeId, actionId)
+    // where actionTypeId = action.system.actionType, actionId = action.system.actionId
+    async handleActionClick (event, actionTypeId, actionId) {
       const actor = this.actor;
       if (!actor) return;
 
@@ -188,35 +144,25 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
           await this.#handleSkill(event, actor, actionId);
           break;
         case ACTION_TYPE.trait:
-          // Display only – no action
+          // Display only – no action on click
           break;
       }
     }
 
-    async #handleStat(event, actor, statId) {
+    async #handleStat (event, actor, statId) {
       const isRightClick = event.button === 2;
 
       const statPaths = {
-        [STAT_ID.hp]: {
-          path: 'system.health.value',
-          maxPath: 'system.health.max',
-        },
-        [STAT_ID.shield]: {
-          path: 'system.shield.value',
-          maxPath: 'system.shield.max',
-        },
-        [STAT_ID.pp]: {
-          path: 'system.powerPoints.value',
-          maxPath: 'system.powerPoints.max',
-        },
+        [STAT_ID.hp]:     { path: 'system.health.value',      maxPath: 'system.health.max' },
+        [STAT_ID.shield]: { path: 'system.shield.value',      maxPath: 'system.shield.max' },
+        [STAT_ID.pp]:     { path: 'system.powerPoints.value', maxPath: 'system.powerPoints.max' },
       };
 
       const entry = statPaths[statId];
-      if (!entry) return; // overland and unknown stats are display-only
+      if (!entry) return; // overland is display-only
 
       const current = foundry.utils.getProperty(actor, entry.path) ?? 0;
-      const max = foundry.utils.getProperty(actor, entry.maxPath) ?? 0;
-
+      const max     = foundry.utils.getProperty(actor, entry.maxPath) ?? 0;
       const newValue = isRightClick
         ? Math.max(0, current - 1)
         : Math.min(max, current + 1);
@@ -224,7 +170,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
       await actor.update({ [entry.path]: newValue });
     }
 
-    async #handleSkill(event, actor, skillSlug) {
+    async #handleSkill (event, actor, skillSlug) {
       const statistic = actor.skills?.[skillSlug];
       if (!statistic) {
         ui.notifications.warn(`Skill "${skillSlug}" not found on this actor.`);
@@ -236,25 +182,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
   // ── SystemManager ─────────────────────────────────────────────────────────
   class SystemManager extends coreModule.api.SystemManager {
-    getActionHandler() {
-      return new ActionHandler();
-    }
-
-    getAvailableRollHandlers() {
-      return { core: 'Core PTR2e' };
-    }
-
-    getRollHandler(rollHandlerId) {
-      return new RollHandler();
-    }
-
-    registerDefaults() {
-      return DEFAULTS;
-    }
-
-    registerSettings(coreUpdate) {
-      registerSettings(coreUpdate);
-    }
+    getActionHandler ()          { return new ActionHandler(); }
+    getAvailableRollHandlers ()  { return { core: 'Core PTR2e' }; }
+    getRollHandler ()            { return new RollHandler(); }
+    registerDefaults ()          { return DEFAULTS; }
+    registerSettings (coreUpdate){ registerSettings(coreUpdate); }
   }
 
   // ── Register module API ───────────────────────────────────────────────────
