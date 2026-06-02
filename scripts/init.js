@@ -18,6 +18,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
   const RAW_GROUPS = [
     g(GROUP_ID.stats,          localize('PTR2e.Groups.Stats')),
     g(GROUP_ID.tags,           localize('PTR2e.Groups.Tags')),
+    g(GROUP_ID.utils,          localize('PTR2e.Groups.Utils')),
     g(GROUP_ID.allSkills,      localize('PTR2e.Groups.AllSkills')),
     g(GROUP_ID.favoriteSkills, localize('PTR2e.Groups.FavoriteSkills')),
     g(GROUP_ID.skills70,       localize('PTR2e.Groups.Skills70')),
@@ -59,6 +60,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
       await this.#buildStats(actor);
       await this.#buildTags(actor);
+      await this.#buildUtils(actor);
       await this.#buildSkills(actor);
     }
 
@@ -122,6 +124,37 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
       if (actions.length) await this.addActions(actions, { id: GROUP_ID.tags, type: 'system' });
     }
 
+    async #buildUtils (actor) {
+      const actions = [
+        {
+          id: 'util-rest',
+          name: localize('PTR2e.Utils.Rest'),
+          system: { actionType: ACTION_TYPE.util, actionId: 'rest' },
+        },
+        {
+          id: 'util-open-dex',
+          name: localize('PTR2e.Utils.OpenDex'),
+          system: { actionType: ACTION_TYPE.util, actionId: 'open-dex' },
+        },
+        {
+          id: 'util-open-party-sheet',
+          name: localize('PTR2e.Utils.OpenPartySheet'),
+          system: { actionType: ACTION_TYPE.util, actionId: 'open-party-sheet' },
+        },
+        {
+          id: 'util-open-tutor-list',
+          name: localize('PTR2e.Utils.OpenTutorList'),
+          system: { actionType: ACTION_TYPE.util, actionId: 'open-tutor-list' },
+        },
+        {
+          id: 'util-luck-roll',
+          name: localize('PTR2e.Utils.LuckRoll'),
+          system: { actionType: ACTION_TYPE.util, actionId: 'luck-roll' },
+        },
+      ];
+      await this.addActions(actions, { id: GROUP_ID.utils, type: 'system' });
+    }
+
     async #buildSkillGroup (actor, groupId, skills) {
       if (!skills.length) return;
       const actions = skills.map((skill) => {
@@ -177,6 +210,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         case ACTION_TYPE.skill:
           await this.#handleSkill(actor, actionId);
           break;
+        case ACTION_TYPE.util:
+          await this.#handleUtil(actor, actionId);
+          break;
         case ACTION_TYPE.trait:
           // Display only — no click action
           break;
@@ -209,6 +245,27 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         return;
       }
       await statistic.roll();
+    }
+
+    async #handleUtil (actor, actionId) {
+      switch (actionId) {
+        case 'luck-roll': {
+          const skill = actor.system.skills?.['luck'];
+          if (skill) await skill.endOfDayLuckRoll();
+          break;
+        }
+        case 'open-tutor-list': {
+          game.ptr.tutorList.render({ force: true, actor });
+          break;
+        }
+        default: {
+          // rest, open-dex, open-party-sheet: delegate to the actor sheet's registered action
+          const sheet = actor.sheet;
+          const fn = sheet?.constructor?.DEFAULT_OPTIONS?.actions?.[actionId];
+          if (fn) await fn.call(sheet);
+          break;
+        }
+      }
     }
   }
 

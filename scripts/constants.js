@@ -9,11 +9,13 @@ export const ACTION_TYPE = {
   stat: 'stat',
   skill: 'skill',
   trait: 'trait',
+  util: 'util',
 };
 
 export const GROUP_ID = {
   stats: 'stats',
   tags: 'tags',
+  utils: 'utils',
   allSkills: 'all-skills',
   favoriteSkills: 'favorite-skills',
   skills70: 'skills-70plus',

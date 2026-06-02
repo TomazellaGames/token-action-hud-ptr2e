@@ -3,11 +3,19 @@
     "Groups": {
       "Stats": "Stats",
       "Tags": "Tags",
+      "Utils": "Utils",
       "AllSkills": "All Skills",
       "FavoriteSkills": "Favorite Skills",
       "Skills70": "70+ Skills",
       "Skills25": "25+ Skills",
       "SkillsOther": "Other Skills"
+    },
+    "Utils": {
+      "Rest": "Rest & Relaxation",
+      "OpenDex": "Open Dex",
+      "OpenPartySheet": "Open Party Sheet",
+      "OpenTutorList": "Open Tutor List",
+      "LuckRoll": "Roll 'End of Day' Luck Check"
     },
     "Stats": {
       "HP": "Hit Points",
