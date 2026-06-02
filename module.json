@@ -1,6 +1,6 @@
 {
   "id": "token-action-hud-ptr2e",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "title": "Token Action HUD - Pokémon Tabletop Reunited: Evolved",
   "description": "Token Action HUD system module for the PTR2E Foundry VTT system",
   "authors": [
@@ -26,7 +26,7 @@
       "id": "token-action-hud-core",
       "type": "module",
       "compatibility": {
-        "minimum": "2.1.0"
+        "minimum": "2.0.0"
       }
     }
   ],
