@@ -8,8 +8,8 @@ function injectSkillSearch () {
   const root = game.tokenActionHud?.element;
   if (!root) return;
 
-  // TAH Core uses data-nest-id on group containers
-  const group = root.querySelector(`[data-nest-id="${GROUP_ID.allSkills}"]`);
+  // Target the inner subgroup where the skill buttons live
+  const group = root.querySelector(`[data-nest-id="${GROUP_ID.allSkills}_${GROUP_ID.allSkills}"]`);
   if (!group) return;
 
   // Avoid double-injection on repeated renders
