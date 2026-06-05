@@ -1,1 +1,29 @@
 /* Token Action HUD - PTR2E styles */
+
+/* ── All Skills search field ─────────────────────────────────────────────── */
+.tah-ptr2e-search-wrapper {
+  padding: 3px 4px 2px;
+  display: flex;
+}
+
+.tah-ptr2e-skill-search {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  color: var(--color-text-light-primary, #f0f0e0);
+  font-size: 11px;
+  padding: 2px 6px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.tah-ptr2e-skill-search::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+
+.tah-ptr2e-skill-search:focus {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.65);
+}
