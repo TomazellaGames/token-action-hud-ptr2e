@@ -2,15 +2,14 @@ import { MODULE, REQUIRED_CORE_MODULE_VERSION, ACTION_TYPE, GROUP_ID, STAT_ID } 
 import { registerSettings } from './settings.js';
 import { Utils } from './utils.js';
 
-// Inject a live search field into the All Skills tab each time the HUD renders.
-Hooks.on('renderTokenActionHud', (_app, html) => {
-  const root = (html instanceof HTMLElement) ? html : html[0];
+// Inject a live search field into the All Skills tab each time the HUD updates.
+function injectSkillSearch () {
+  // game.tokenActionHud is the live app reference set by TAH Core
+  const root = game.tokenActionHud?.element;
   if (!root) return;
 
-  const group =
-    root.querySelector(`[data-id="${GROUP_ID.allSkills}"]`) ??
-    root.querySelector(`[data-group-id="${GROUP_ID.allSkills}"]`) ??
-    root.querySelector(`[data-tab="${GROUP_ID.allSkills}"]`);
+  // TAH Core uses data-nest-id on group containers
+  const group = root.querySelector(`[data-nest-id="${GROUP_ID.allSkills}"]`);
   if (!group) return;
 
   // Avoid double-injection on repeated renders
@@ -27,21 +26,25 @@ Hooks.on('renderTokenActionHud', (_app, html) => {
 
   group.prepend(wrapper);
 
-  // Prevent TAH Core from intercepting events meant for the input
+  // Stop TAH Core from intercepting events meant for the input
   for (const evt of ['click', 'mousedown', 'pointerdown', 'keydown', 'keyup', 'keypress']) {
     input.addEventListener(evt, e => e.stopPropagation());
   }
 
   input.addEventListener('input', () => {
     const query = input.value.trim().toLowerCase();
-    const actions = group.querySelectorAll('.tah-action, [data-action-id]');
+    // TAH Core wraps each action in [data-part="action"]
+    const actions = group.querySelectorAll('[data-part="action"]');
     for (const action of actions) {
-      const nameEl = action.querySelector('.tah-action-name, .tah-name') ?? action;
+      const nameEl = action.querySelector('.tah-action-name') ?? action;
       const name = nameEl.textContent.trim().toLowerCase();
       action.style.display = (!query || name.includes(query)) ? '' : 'none';
     }
   });
-});
+}
+
+Hooks.on('tokenActionHudCoreHudUpdated', injectSkillSearch);
+Hooks.on('renderTokenActionHud',         injectSkillSearch);
 
 Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
   const localize = coreModule.api.Utils.i18n;
